@@ -4,6 +4,9 @@
 #define S3 11
 #define sensorOut 12
 #define RELE 4
+#define Calibration 5
+
+
 
 // Stores frequency read by the photodiodes
 int freqVermelho = 0;
@@ -27,6 +30,7 @@ void setup() {
   pinMode(S3, OUTPUT);
   pinMode(RELE, OUTPUT);
   pinMode(sensorOut, INPUT);
+  pinmode(Calibration, INPUT);
     
   digitalWrite(S0,LOW);
   digitalWrite(S1,HIGH);
@@ -70,14 +74,18 @@ void idColor(int *vermelho, int *azul, int *verde){
 }
 
 void loop() {
-  delay(10);
+
+  delay(100);
   idColor(&difVermelho, &difAzul, &difVerde);
   media = (difVermelho + difVerde + difAzul)/3;
   desvio_padrao = sqrt(   (pow(difVermelho - media,2) + pow(difVerde - media,2) + pow(difAzul - media,2)) / 3);
   
+
+  Serial.println("M");
+  Serial.println(media);
   Serial.println(desvio_padrao);
 
-  if(desvio_padrao < 100){
+  if(desvio_padrao < 90 && media < 700){
     digitalWrite(RELE, HIGH);
     digitalWrite(LED_BUILTIN, HIGH);
   }
